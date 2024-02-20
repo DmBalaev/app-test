@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+    stages {
+        stage('Update Repository') {
+            steps {
+               dir('app-test') {
+                    bat 'git pull'
+                }
+            }
+        }
+        stage('Build') {
+            steps {
+                dir('app-test') {
+                    bat 'mvnw clean install'
+                }
+            }
+        }
+        stage('Docker') {
+            steps {
+                script {
+                    // Остановка контейнера, если он запущен
+                    bat 'docker stop app || exit 0' 
+                    // Удаление контейнера, если он существует
+                    bat 'docker rm app || exit 0' 
+                    // Сборка Docker образа
+                    dir('app-test') {
+                        bat 'docker build -t myapp .'
+                    }
+                    // Запуск Docker контейнера
+                    bat 'docker run -d --name app -p 8888:8080 myapp'
+                }
+            }
+        }
+    }
+}
