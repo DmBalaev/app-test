@@ -17,7 +17,7 @@ public class DemoApplication {
 
 		@GetMapping
 		public String greeting(){
-			return "Hello";
+			return "Hello dima";
 		}
 	}
 }
